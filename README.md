@@ -69,6 +69,6 @@ python3 scripts/makeCondorJobs.py  -f filelists/DYJetsToLL_13TeV_MINIAODSIM.fls 
 see `python3 scripts/makeCondorJobs.py -h` for more details
 
 #### TODOs
-* Add support for a sample analysis.C and its outputs. 
+* Add support for a sample analysis.C / analysis.py  and its outputs. 
 * update instructions for getting the file-list. 
 * update setup for completely detached file system in condor worker nodes. 
