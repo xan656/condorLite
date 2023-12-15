@@ -33,8 +33,8 @@ mkdir soft_dev
 chmod -R 777 soft_dev
 apptainer run --bind soft_dev:/code docker://cmsopendata/cmssw_7_6_7-slc6_amd64_gcc493 /bin/bash
 ```
-  * currently this step fails to launch the container interactively and drop a shell in the container environment
-  * This command but succeeds in setting up the proper environment / cmssw files
+    - currently this step fails to launch the container interactively and drop a shell in the container environment
+    - This command but succeeds in setting up the proper environment / cmssw files
 * clone the `POET` repo in the target destination (This is a workaround for the issue of having `git clone` not running inside the container ).
 ```
 cd soft_dev/CMSSW_7_6_7/src/
@@ -56,7 +56,10 @@ Try the script inside your container.
 ```
 apptainer exec --bind soft_dev/:/code --bind results:/results docker://cmsopendata/cmssw_7_6_7-slc6_amd64_gcc493 ./test.sh
 ```
-To scale the analysis to multiple files , we can use `condor/makeCondorJobs.py`. This script is driven by 2 files a `filelist` file and a `run_template` file. The `filelist` has a list of files over which the analysis need to be ran. The `run_template` file is a standalone customizable script taht can can execute our analysis workflow.This  file  can have placeholders that  can be customized by `condor/makeCondorJobs.py` script ( eg. with filename, number events to process, or any other parameters that we would like to pass on to the script). 
+To scale the analysis to multiple files , we can use `condor/makeCondorJobs.py`. This script is driven by 2 files a `filelist` file and a `run_template` file. 
+ - The `flelist` has a list of files over which the analysis need to be ran. 
+ - The `run_template` file is a standalone customizable script that can can execute our analysis workflow.This  file  can have placeholders that  can be customized by `condor/makeCondorJobs.py` script ( eg. with filename, number events to process, or any other parameters that we would like to pass on to the script). 
+
 A sample `filelist` and `run_template` file can be found as `filelists/DYJetsToLL_13TeV_MINIAODSIM.fls` and `templates/runScript.tpl.sh`
 
 For making a set of analysis jobs run 
