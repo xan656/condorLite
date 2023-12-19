@@ -48,10 +48,13 @@ git clone -b 2015MiniAOD https://github.com/cms-opendata-analyses/PhysObjectExtr
 Now one can drop into the container shell to develop and compile the code.
 
 ## Scaling up your Analysis.
-First step in running your code over the dataset is to make a self-contained shell script  that can run your workflow. Here we provide an example script. ( _test.sh_ )
+First step in running your code over the dataset is to make a self-contained shell script  that can run your workflow. Here we provide an example script. ( _test.sh_ ) . The `export` lines are required for sourcing the paths from the specific docker image we use.   
 ```
 cd soft_dev/CMSSW_7_6_7/src/
 source /cvmfs/cms.cern.ch/cmsset_default.sh
+export LD_LIBRARY_PATH=${UPDATE_PATH}/lib:${UPDATE_PATH}/lib64:${LD_LIBRARY_PATH}
+export PATH=${UPDATE_PATH}/bin:${PATH}
+export GIT_EXEC_PATH=${UPDATE_PATH}/libexec/git-core
 cmsenv
 cmsRun PhysObjectExtractorTool/PhysObjectExtractor/python/poet_cfg.py
 mv *.root /results
