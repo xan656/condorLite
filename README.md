@@ -10,10 +10,15 @@ Following tutorials familiarizes one to containers and tools for analyzing opend
 * [Docker Pre-Exercises](https://cms-opendata-workshop.github.io/workshop2023-lesson-docker/)
 * [POET Pre-Exercises](https://cms-opendata-workshop.github.io/workshop2023-lesson-physics-objects/01-intro-poet/index.html)
 
+* make a directory for mounting the codes from the docker image
+```
+mkdir soft_dev
+chmod -R 777 soft_dev
+```
 For `singularity` / `apptainer` user following  commands will be useful.
 * Spawn a shell in the container.
 ```
-apptainer shell --bind /grid_mnt/t3home/athachay/opendata_wshop/soft_dev:/code docker://cmsopendata/cmssw_7_6_7-slc6_amd64_gcc493
+apptainer shell --bind soft_dev:/code docker://cmsopendata/cmssw_7_6_7-slc6_amd64_gcc493
 ```
 * pull the docker container into a local `sif` file. This file can be later used to make container rather than pulling the container all the time.
 ```
