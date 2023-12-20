@@ -18,14 +18,20 @@ cd condorLite/
 
 ## Scaling up your Analysis.
 
+For making a set of analysis jobs :
+ - from an existing filelist.
+```
+python3 scripts/makeCondorJobs.py  -f filelists/DYJetsToLL_13TeV_MINIAODSIM.fls --run_template templates/runScript.tpl.sh  --tag DYJetsToLL_v1 -j 5 -e 2000
+```
+ - from `recid` of a dataset. This command will also export the filelist for the dataset into a file.
+```
+python3 scripts/makeCondorJobs.py --recid 16446 --tag DYJetsToLL_v1 -n 2 -j 4 -e 5000 --run_template templates/runScript.tpl.sh
+```
 
-For making a set of analysis jobs run 
-```
-python3 scripts/makeCondorJobs.py  -f filelists/DYJetsToLL_13TeV_MINIAODSIM.fls --run_template templates/runScript.tpl.sh  -v v1 -j 5 -e 2000
-```
+
 see `python3 scripts/makeCondorJobs.py -h` for more details
 
 #### TODOs
-* Add the job spawn script for spawning jobs from cernopendata-client.
+* add support for non-xrootd file acces using cernopendata-client
 * update setup for completely detached file system in condor worker nodes. 
 * Add support for a sample analysis.C / analysis.py  and its outputs. 
