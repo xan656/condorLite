@@ -26,6 +26,7 @@ python3 scripts/makeCondorJobs.py  -f filelists/DYJetsToLL_13TeV_MINIAODSIM.fls 
  - from `recid` of a dataset. This command will also export the filelist for the dataset into a file.
 ```
 python3 scripts/makeCondorJobs.py --recid 16446 --tag DYJetsToLL_v1 -n 2 -j 4 -e 5000 --run_template templates/runScript.tpl.sh
+# outputs will be stored to results/odw_poet/poetV1_DYJetsToLL_v1/
 ```
 
 

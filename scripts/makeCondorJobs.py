@@ -46,10 +46,12 @@ if args.submit or args.resubmit:
         print("Exiting ! ")
         exit(0)
 
+destination=f'{RESULT_BASE}/{JOB_TYPE}/{job_hash}/'
 
 print(" Number of jobs to be made "        ,args.njobs)
 print(" Number of events to process per job  "       ,args.maxevents)
 print(" Tag for the job ", args.tag )
+print(" Output files will be stored at ", destination )
 if args.flist:
    print(" File list to process : ",args.flist)
 elif args.recid:
@@ -119,7 +121,6 @@ while fileList and jobid < args.njobs:
     dirName  =f'{head}/Job_{jobid}/'
     if not os.path.exists(dirName):
         os.system('mkdir -p '+dirName)
-    destination=f'{RESULT_BASE}/{JOB_TYPE}/{job_hash}/'
     if not os.path.exists(destination):
         os.system('mkdir -p '+destination)
 
