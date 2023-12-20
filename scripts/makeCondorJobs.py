@@ -29,11 +29,10 @@ parser.add_argument('-n',"--nFilesPerJob", help="Number of files to process per 
 parser.add_argument('-e',"--nevts", help="Number of events per job",default='-1')
 parser.add_argument('-f',"--flist", help="Files to process",default=None)
 parser.add_argument("--run_template", help="RunScript Template",default='')
-parser.add_argument('-v',"--version", help="Vesion of the specific work",default='TEST')
+parser.add_argument("--tag", help="Tag or vesion of the job",default='condor')
 
 args = parser.parse_args()
 
-version=args.version
 
 njobs=int(args.njobs)
 maxevents=int(args.nevts)
@@ -44,7 +43,7 @@ resubmit2Condor=args.resubmit
 isTest=args.test
 onlyPrint=args.printOnly
 nfilesPerJob=args.nFilesPerJob
-job_hash=f'poetV1_{args.version}'
+job_hash=f'poetV1_{args.tag}'
 
 if isTest :
     njobs=10
@@ -107,6 +106,7 @@ if True:
            os.system('rm '+runScriptName+'.sucess')
         runScript=open(runScriptName,'w')
         tmp=runScriptTxt.replace("@@DIRNAME",dirName)
+        tmp=tmp.replace("@@TAG",str(args.tag))
         tmp=tmp.replace("@@ISDATA",str(args.isData))
         tmp=tmp.replace("@@PWD",pwd)
         tmp=tmp.replace("@@IDX",str(jobid))
@@ -129,7 +129,7 @@ if True:
 
 print("")
 print("")
-print("All condor submit files to be submitted ")
+print("Condor Jobs can now be submitted by executing : ")
 for fle in allCondorSubFiles:
     print('condor_submit '+fle)
     if submit2Condor or resubmit2Condor:
