@@ -32,6 +32,6 @@ python3 scripts/makeCondorJobs.py --recid 16446 --tag DYJetsToLL_v1 -n 2 -j 4 -e
 see `python3 scripts/makeCondorJobs.py -h` for more details
 
 #### TODOs
-* add support for non-xrootd file acces using cernopendata-client
+* add support for non-xrootd file acces using cernopendata-client.
 * update setup for completely detached file system in condor worker nodes. 
-* Add support for a sample analysis.C / analysis.py  and its outputs. 
+* Add sample workflow for a sample analysi scripts analysis.C / analysis.py  and its outputs. 
