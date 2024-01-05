@@ -28,10 +28,10 @@ git clone -b 2015MiniAOD https://github.com/cms-opendata-analyses/PhysObjectExtr
 scram b -j 4
 cd $_CONDOR_SCRATCH_DIR
 cmsRun /code/CMSSW_7_6_7/src/PhysObjectExtractorTool/PhysObjectExtractor/python/poet_cfg.py  @@ISDATA inputFiles=@@FNAMES maxEvents=@@MAXEVENTS outputFile=outfile_@@IDX.root tag=@@TAG
-cp *.root @@DESTINATION  
 EOL
 cat container_runScript.sh
 chmod +x container_runScript.sh
 apptainer exec --writable-tmpfs --bind $_CONDOR_SCRATCH_DIR --bind workdir/:/code --bind @@DESTINATION docker://cmsopendata/cmssw_7_6_7-slc6_amd64_gcc493 ./container_runScript.sh
 echo exit code from the execution in container : $?
-rm container_runScript.sh
+cp *.root @@DESTINATION  
+rm -rf workdir

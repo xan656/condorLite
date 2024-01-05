@@ -108,7 +108,7 @@ head=pwd+f'/Condor/{JOB_TYPE}/{job_hash}/'
 print()
 print(f"Making Jobs in {runScriptTemplate} for files from {filelistName}")
 jobid=0
-while fileList and jobid < args.njobs: 
+while fileList and ( args.njobs < 0 or jobid < args.njobs): 
     jobid+=1
     flsToProcess=[]
     for i in range(args.nFilesPerJob):
@@ -143,6 +143,7 @@ while fileList and jobid < args.njobs:
 
 print()
 condorScriptName=head+'/job'+htag+'.sub'
+print(f"{condorScriptName}")
 with open(condorScriptName,'w') as condorScript:
     condorScript.write(condorScriptString)
     condorScript.write("queue filename matching ("+head+"/*/*.sh)\n")
