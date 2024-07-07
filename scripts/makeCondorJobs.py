@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python3
 from __future__ import print_function
 import os,glob
 import copy,json
@@ -7,6 +7,9 @@ import subprocess
 
 condorScriptString="\
 executable = $(filename)\n\
+request_cpus   = 2\n\
+request_memory = 2048M\n\
+request_disk   = 2G\n\n\
 output = $Fp(filename)run.$(Cluster).stdout\n\
 error = $Fp(filename)run.$(Cluster).stderr\n\
 log = $Fp(filename)run.$(Cluster).log\n\
@@ -16,15 +19,15 @@ HOME=os.environ['HOME']
 
 maxMeterialize=100
 RESULT_BASE=f'{pwd}/results'
-JOB_TYPE='odw_poet'
+JOB_TYPE='jetalgo'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s',"--submit", help="Submit file to condor pool", action='store_true' )
 parser.add_argument('-r',"--resubmit", help="Re-Submit file to condor pool", action='store_true' )
 parser.add_argument('-t',"--test", help="Test Job", action='store_true' )
 parser.add_argument(     "--isData"     , help="is the job running over datafiles ?", action='store_true' )
+parser.add_argument(     "--isMC"     , help="is the job running over datafiles ?", action='store_true' )
 parser.add_argument('-j',"--njobs", help="Number of jobs to make",default=-1,type=int)
-parser.add_argument('-n',"--nFilesPerJob", help="Number of files to process per job",default=1,type=int)
 parser.add_argument('-e',"--maxevents", help="Number of events per job",default=-1, type=int)
 parser.add_argument('-f',"--flist", help="Files to process",default=None)
 parser.add_argument(     "--recid", help="recid of the dataset to process",default=None)
@@ -33,7 +36,7 @@ parser.add_argument("--tag", help="Tag or vesion of the job",default='condor')
 
 args = parser.parse_args()
 
-job_hash=f'poetV1_{args.tag}'
+job_hash=f'{args.tag}'
 
 if args.test :
     args.njobs=10
@@ -69,7 +72,7 @@ fileList=[]
 
 if args.flist:
     filelistName=args.flist
-elif args.recid:	
+elif args.recid:
     cmd=f'cernopendata-client get-file-locations --recid {args.recid} --protocol xrootd'
     print("querying database using cernopendata-client for the filelist ")
     print(f"   > []$ {cmd}")
@@ -85,13 +88,13 @@ elif args.recid:
     title=proc_out2.stdout.decode('UTF-8')[:-1]
     fls=proc_out.stdout.decode('UTF-8').splitlines()
     print(f"Obtained details for recid {args.recid} " )
-    print(f" > Title : {title}")	 	
-    print(f" > {len(fls)} files in filelist")	 	
+    print(f" > Title : {title}")
+    print(f" > {len(fls)} files in filelist")
     with open(filelistName,'w') as f:
         f.write(proc_out.stdout.decode('UTF-8'))
         print(f"Filelist has been exported to {filelistName}")
 else:
-    exit()    
+    exit()
 
 with open(filelistName,'r') as f:
     txt=f.readlines()
@@ -108,15 +111,9 @@ head=pwd+f'/Condor/{JOB_TYPE}/{job_hash}/'
 print()
 print(f"Making Jobs in {runScriptTemplate} for files from {filelistName}")
 jobid=0
-while fileList and ( args.njobs < 0 or jobid < args.njobs): 
+while fileList and ( args.njobs < 0 or jobid < args.njobs):
     jobid+=1
-    flsToProcess=[]
-    for i in range(args.nFilesPerJob):
-        if not fileList:
-            break
-        flsToProcess.append(fileList.pop())
 
-    fileNames=','.join(flsToProcess)
     dirName  =f'{head}/Job_{jobid}/'
     if not os.path.exists(dirName):
         os.system('mkdir -p '+dirName)
@@ -128,11 +125,12 @@ while fileList and ( args.njobs < 0 or jobid < args.njobs):
        os.system('rm '+runScriptName+'.sucess')
     runScript=open(runScriptName,'w')
     tmp=runScriptTxt.replace("@@DIRNAME",dirName)
-    tmp=tmp.replace("@@TAG",str(args.tag))
+    tmp=tmp.replace("@@GLOBALTAG",str(args.tag))
     tmp=tmp.replace("@@ISDATA",str(args.isData))
+    tmp=tmp.replace("@@ISMC",str(args.isMC))
     tmp=tmp.replace("@@PWD",pwd)
-    tmp=tmp.replace("@@IDX",str(jobid))
-    tmp=tmp.replace("@@FNAMES",fileNames)
+    tmp=tmp.replace("@@INFNAME",fileList[jobid])
+    tmp=tmp.replace("@@OUTFNAME",str(jobid)+"_output_")
     tmp=tmp.replace("@@MAXEVENTS",str(args.maxevents))
     tmp=tmp.replace("@@RUNSCRIPT",runScriptName)
     tmp=tmp.replace("@@DESTINATION",destination)
@@ -150,11 +148,9 @@ with open(condorScriptName,'w') as condorScript:
     print(f"{jobid} Jobs made !\n\t submit file  : {condorScriptName}")
 allCondorSubFiles.append(condorScriptName)
 
-print("")
-print("")
-print("Condor Jobs can now be submitted by executing : ")
+print("\n\nCondor Jobs can now be submitted by executing : ")
 for fle in allCondorSubFiles:
     print('condor_submit '+fle)
     if args.submit or args.resubmit:
         os.system('condor_submit '+fle)
-print("")
+print("\n")
